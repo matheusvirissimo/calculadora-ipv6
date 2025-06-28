@@ -167,3 +167,70 @@ def gerar_ipv6_aleatorio():
     
     # Junta todos os blocos com ':' para formar o endereço completo
     return ":".join(partes_aleatorias)
+
+def apresentar_calculadora():
+    """Função principal que apresenta o menu e interage com o usuário."""
+    
+    print("--- Calculadora IPv6 em Python ---")
+    
+    while True:
+        # Exibe o menu de opções para o usuário
+        print("\nO que você gostaria de fazer?")
+        print("1 - Abreviar um endereço IPv6 e exibir com prefixo")
+        print("2 - Gerar endereços IPv6 aleatórios (com prefixos /48 e /54)")
+        print("3 - Sair")
+        
+        escolha = input("Digite o número da sua escolha: ")
+        
+        if escolha == '1':
+            # Opção de abreviar um endereço
+            entrada_usuario = input("\nDigite o endereço IPv6 com o prefixo (Ex: 2801:0390:0080::0100:0/64): ")
+            try:
+                # Tenta separar o endereço do prefixo
+                if '/' in entrada_usuario:
+                    endereco, prefixo = entrada_usuario.split('/')
+                    prefixo_str = f"/{prefixo}"
+                else:
+                    # Se não houver prefixo, continua mesmo assim
+                    endereco = entrada_usuario
+                    prefixo_str = ""
+
+                # Processo de normalização e abreviação
+                partes_normalizadas = normalizar_ipv6(endereco)
+                endereco_abreviado = abreviar_ipv6(partes_normalizadas)
+                
+                print("\n--- Resultado ---")
+                print(f"Endereço Original : {entrada_usuario}")
+                print(f"Endereço Abreviado: {endereco_abreviado}{prefixo_str}")
+                print("-------------------")
+                
+            except Exception as e:
+                # Captura qualquer erro que possa ocorrer durante o processamento
+                print(f"\nOcorreu um erro. Verifique se o endereço digitado é válido. Erro: {e}")
+
+        elif escolha == '2':
+            # Opção de gerar endereços aleatórios
+            print("\n--- Gerando Endereços Aleatórios ---")
+            print("Copie o endereço para fazer sua abreviação depois!")
+            
+            # Gera o primeiro endereço
+            ipv6_aleatorio_1 = gerar_ipv6_aleatorio()
+            partes_normalizadas_1 = normalizar_ipv6(ipv6_aleatorio_1)
+            ipv6_abreviado_1 = abreviar_ipv6(partes_normalizadas_1)
+            print(f"Endereço Aleatório 1: {ipv6_abreviado_1}/48")
+
+            # Gera o segundo endereço
+            ipv6_aleatorio_2 = gerar_ipv6_aleatorio()
+            partes_normalizadas_2 = normalizar_ipv6(ipv6_aleatorio_2)
+            ipv6_abreviado_2 = abreviar_ipv6(partes_normalizadas_2)
+            print(f"Endereço Aleatório 2: {ipv6_abreviado_2}/54")
+            print("------------------------------------")
+            
+        elif escolha == '3':
+            # Encerra o programa
+            print("\nENCERRANDO PROGRAMA.")
+            break
+            
+        else:
+            # Opção inválida
+            print("\nOpção inválida. Por favor, escolha 1, 2 ou 3.")
