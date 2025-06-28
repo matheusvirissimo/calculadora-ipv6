@@ -14,9 +14,13 @@ Calculadora IPv6 feita em `python` que utiliza os conceitos de rightmost e leftm
 A calculadora foi modulada da seguinte forma para melhor visualização e organização pessoal:
 
 calculadora-ipv6/
+
 ├── calculadora_ipv6.py
+
 ├── main.py
+
 ├── gitignore
+
 └── README.md
 
 ### Explicação das funções
