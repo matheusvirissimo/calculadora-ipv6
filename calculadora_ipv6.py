@@ -71,6 +71,71 @@ def normalizar_ipv6(endereco_ipv6):
         
     return partes_normalizadas
 
+def abreviar_ipv6(partes_normalizadas):
+    """Abrevia um endereço IPv6 normalizado de acordo com as regras da RFC 4193
+
+    Esta função implementa três regras de abreviação:
+    1. Remove zeros à esquerda de cada bloco
+    2. Encontra a maior sequência de blocos de zero e a substitui por '::'
+    3. Não comete ambiguidade
+
+    Parâmetros
+    ----------
+    partes_normalizadas : list
+        Uma lista com os 8 blocos de 4 dígitos de um endereço IPv6
+
+    Retorna
+    -------
+    str
+        O endereço IPv6 abreviado.
+        Ex: "2801:390:80:0:100::ff00"
+    """
+    # Encontrar a maior sequência de blocos de zero ('0000')
+    maior_sequencia_inicio = -1
+    maior_sequencia_tamanho = 0
+    sequencia_atual_inicio = -1
+    sequencia_atual_tamanho = 0
+
+    # Itera pelos blocos para encontrar a sequência mais longa de '0000'
+    for i, parte in enumerate(partes_normalizadas):
+        if parte == '0000':
+            if sequencia_atual_tamanho == 0:
+                sequencia_atual_inicio = i
+            sequencia_atual_tamanho += 1
+        else:
+            if sequencia_atual_tamanho > maior_sequencia_tamanho:
+                maior_sequencia_tamanho = sequencia_atual_tamanho
+                maior_sequencia_inicio = sequencia_atual_inicio
+            sequencia_atual_tamanho = 0
+    
+    # Verifica a última sequência após o loop terminar
+    if sequencia_atual_tamanho > maior_sequencia_tamanho:
+        maior_sequencia_tamanho = sequencia_atual_tamanho
+        maior_sequencia_inicio = sequencia_atual_inicio
+
+    # Remove os zeros à esquerda de cada bloco
+    # Ex: '0390' vira '390', '0000' vira '0'
+    partes_sem_zeros_esquerda = [parte.lstrip('0') or '0' for parte in partes_normalizadas]
+
+    # Se encontramos uma sequência de zeros com mais de 1 bloco, aplicamos a regra '::'
+    if maior_sequencia_tamanho > 1:
+        inicio = maior_sequencia_inicio
+        fim = inicio + maior_sequencia_tamanho
+        
+        # Monta o endereço abreviado
+        parte_esquerda = partes_sem_zeros_esquerda[:inicio]
+        parte_direita = partes_sem_zeros_esquerda[fim:]
+        
+        # Junta as partes com '::' no meio
+        # A lógica `"::".join([...])` lida com casos onde uma das partes é vazia
+        # Ex: ::1 (parte_esquerda é vazia) ou 1:: (parte_direita é vazia)
+        endereco_abreviado = ":".join(parte_esquerda) + "::" + ":".join(parte_direita)
+    else:
+        # Se não há sequência de zeros para abreviar, apenas juntamos com ':'
+        endereco_abreviado = ":".join(partes_sem_zeros_esquerda)
+        
+    return endereco_abreviado
+
 def gerar_ipv6_aleatorio():
     """Gera um endereço IPv6 totalmente aleatório
 
