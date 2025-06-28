@@ -28,17 +28,45 @@ def expandir_ipv6(endereco_ipv6):
         blocos_esquerda = [bloco for bloco in parte_esquerda.split(':') if bloco]
         blocos_direita = [bloco for bloco in parte_direita.split(':') if bloco]
         
-        # Calcula quantos blocos de zero precisam ser inseridos
-        # Um IPv6 completo tem 8 blocos.
+        # Calcula quantos blocos de zero precisam ser inseridos (IPv6 completo tem 8 blocos)
         num_zeros = 8 - (len(blocos_esquerda) + len(blocos_direita))
         
         # Cria os blocos de zeros e junta tudo
         blocos_zeros = ['0000'] * num_zeros
         partes_expandidas = blocos_esquerda + blocos_zeros + blocos_direita
     else:
-        # Se não há '::', apenas separamos os blocos existentes
+        # Se não há '::', já está expandindo, então apenas separamos os blocos existentes
         partes_expandidas = endereco_ipv6.split(':')
         
     return partes_expandidas
 
+def normalizar_ipv6(endereco_ipv6):
+    """Normaliza um endereço IPv6 para sua representação completa de 8 blocos de 4 dígitos.
 
+    Primeiro, expande o endereço para garantir que tenha 8 blocos, e depois
+    preenche cada bloco com zeros à esquerda (leftmost) até que tenha 4 dígitos
+
+    Parâmetros
+    ----------
+    endereco_ipv6 : str
+        O endereço IPv6, em qualquer formato válido
+
+    Retorna
+    -------
+    list
+        Uma lista de 8 strings, onde cada string é um bloco de 4 dígitos HEXADECIMAIS
+        Ex: ['2801', '0390', '0080', '0000', '0100', '0000', '0000', 'ff00']
+    """
+
+    # Garante que o endereço está expandido para 8 blocos
+    partes_expandidas = expandir_ipv6(endereco_ipv6)
+
+    # Lista que armazena o resultado final normalizado
+    partes_normalizadas = []
+    
+    # Iterar sobre cada bloco do endereço expandido
+    for parte in partes_expandidas:
+        bloco_normalizado = parte.zfill(4) # zfill() - Preenche o bloco com zeros à esquerda até atingir 4 caracteres
+        partes_normalizadas.append(bloco_normalizado)
+        
+    return partes_normalizadas
