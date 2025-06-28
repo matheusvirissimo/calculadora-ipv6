@@ -70,3 +70,35 @@ def normalizar_ipv6(endereco_ipv6):
         partes_normalizadas.append(bloco_normalizado)
         
     return partes_normalizadas
+
+def gerar_ipv6_aleatorio():
+    """Gera um endereço IPv6 totalmente aleatório
+
+    Cada endereço IPv6 é formado por 8 blocos de 4 dígitos, totalizando 16 bits por bloco.
+    Cria 8 blocos, cada um sendo um número hexadecimal aleatório de 4 dígitos
+
+    Parâmetros
+    ----------
+    Nenhum.
+
+    Retorna
+    -------
+    str
+        Um endereço IPv6 completo e aleatório.
+        Ex: "a1b2:c3d4:e5f6:1234:5678:90ab:cdef:1a2b"
+    """
+    # Lista para guardar os 8 blocos do nosso IPv6
+    partes_aleatorias = []
+    
+    # Um endereço IPv6 tem 8 blocos
+    for _ in range(8):
+        # Gera um número aleatório entre 0 e 65535 (que é FFFF em hexadecimal)
+        bloco_decimal = random.randint(0, 65535)
+        
+        # Converte o número para hexadecimal e formata para ter 4 dígitos
+        # Ex: 255 -> 'ff' -> '00ff'
+        bloco_hex = format(bloco_decimal, 'x').zfill(4)
+        partes_aleatorias.append(bloco_hex)
+    
+    # Junta todos os blocos com ':' para formar o endereço completo
+    return ":".join(partes_aleatorias)
